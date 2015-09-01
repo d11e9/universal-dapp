@@ -7,17 +7,47 @@
 
 .udapp input,
 .udapp button,
-.udapp-setup input,
+.udapp-setup textarea,
 .udapp-setup button {
     display: block;
     width: 100%;
     padding: 0.6em;
     box-sizing: border-box;
+    border: 1px solid #333;
 }
 
-.udapp-setup input {
+.udapp-setup textarea {
 	margin-bottom: 1em;
+	height: 7em;
 }
+
+.udapp-setup button {
+	background-color: #666;
+	color: white;
+	cursor: pointer;
+}
+
+.udapp input,
+.udapp button {
+	width: 33%;
+	display: block;
+	float: left;
+}
+
+.udapp input { border-left: 0 none;}
+.udapp button {
+	background-color: #666;
+	color: white;
+	cursor: pointer;
+}
+
+.udapp .instance input,
+.udapp .instance button {
+	width: 50%;
+	float: left;
+}
+
+
 
 .udapp .create {
 	overflow: auto;
@@ -32,6 +62,7 @@
 .udapp .output {
 	padding: 1em;
     clear: both;
+    word-wrap: break-word;
 }
 
 .udapp .output.error {
@@ -53,23 +84,25 @@
     cursor: pointer;
 }
 
-.udapp .create input,
-.udapp .create button {
-	width: 33%;
-	display: block;
-	float: left;
-}
-
 .udapp .instance {
 	padding: 0.4em;
 	background-color: #ccc;
+	margin-bottom: 1em;
+	position: relative;
 }
 
-.udapp .instance input,
-.udapp .instance button {
-	width: 50%;
+.udapp .instance:last-child {
+	margin-bottom: 0;
+}
+
+
+
+.udapp .instance .output {
+	background-color: #333;
+	color: white;
 }
 
 .udapp .instance .contractProperty {
 	overflow: auto;
+	margin-bottom: 0.4em;
 }

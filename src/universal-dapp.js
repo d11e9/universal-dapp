@@ -41,12 +41,10 @@ UniversalDApp.prototype.render = function () {
 UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
     var $el = $('<div class="udapp-setup" />');
-    var $nameInput = $('<input type="text" class="name" placeholder="ContractName"/>')
-    var $abiInput = $('<input type="text" class="abi" placeholder="[json ABI interface]"/>')
-    var $binaryInput = $('<input type="text" class="code" placeholder="BYTECODE"/>')
-    var $createButton = $('<button />').text('Create DApp')
+    var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytyecode, "interface": abi }, { ... } ]\'/>')
+    var $createButton = $('<button />').text('Create Universal DApp')
     $createButton.click(function(ev){
-        var contracts =  [{name: $nameInput.val(), interface: $abiInput.val(), bytecode: $binaryInput.val() }];
+        var contracts =  $.parseJSON( $jsonInput.val() );
         if (cb) {
             var err = null;
             var dapp = null;
@@ -61,7 +59,7 @@ UniversalDApp.prototype.getABIInputForm = function (cb){
             self.$el.empty().append( self.render() )
         }
     })
-    $el.append( $nameInput ).append( $abiInput ).append( $binaryInput ).append( $createButton )
+    $el.append( $jsonInput ).append( $createButton )
     return $el;
 }
 
@@ -90,7 +88,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         
         var $instance = $('<div class="instance"/>');
         if (self.options.removable_instances) {
-            var $close = $('<div class="udapp-instance-close" />')
+            var $close = $('<div class="udapp-close" />')
             $close.click( function(){ $instance.remove(); } )
             $instance.append( $close );
         }
@@ -105,8 +103,6 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         });
         ($el || $createInterface ).append( $instance )
     }
-
-    
 
     if (!address || !$target) {
         $createInterface.append( this.getCallButton({
@@ -142,6 +138,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         if (inputs != '') inputs += ', ';
         inputs += inp.type + ' ' + inp.name;
     });
+    if (!args.bytecode && !fun.displayName()) return;
     var inputField = $('<input/>').attr('placeholder', inputs);
     var outputSpan = $('<div class="output"/>');
     var button = $('<button/>')
@@ -160,6 +157,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 else if (isConstructor) {
                     outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
                     args.appendFunctions(result.createdAddress);
+                } else if (!result.vm.return) {
+                    console.log( result )
                 } else {
                     var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
                     outputSpan.text(' Returned: ' + JSON.stringify(outputObj));
