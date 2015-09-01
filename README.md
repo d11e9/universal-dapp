@@ -3,10 +3,16 @@
 
 Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with https://github.com/chriseth/browser-solidity or in cases where you have a ABI for an existing contract
 
-##Examples
+##How to use
+
+Include the source and its dependencies in your html.
+
+	<script src="lib/ethereumjs-vm.js"></script>
+	<script src="lib/web3.min.js"></script>
+	<script src="src/universal-dapp.js"></script>
 
 For the truly Universal Dapp which has input for ABI and Bytecode you can do the following:
-
+	
 	<script>
         $(function(){
             var dApp = new UniversalDapp([]);
@@ -28,6 +34,10 @@ If you'd like to use a universal DApp for a specific set of contracts, either al
             $('body').append( dApp.render() )
         });
     </script>
+
+###Example
+
+Check out the `gh-pages` branch [index.html](http://d11e9.github.com/universal-dapp) for a full working example.
 
 ##Acknowledgements
 
