@@ -1,4 +1,4 @@
-function UniversalDapp (contracts) {
+function UniversalDApp (contracts) {
     this.$el = $('<div class="dapp" />');
     this.contracts = contracts;
     this.stateTrie = new EthVm.Trie();
@@ -15,7 +15,7 @@ function UniversalDapp (contracts) {
     this.nonce = 0;
     this.stateTrie.put(this.address, this.account.serialize());
 }
-UniversalDapp.prototype.render = function () {
+UniversalDApp.prototype.render = function () {
     if (this.contracts.length == 0) {
         this.$el.append( this.getABIInputForm() );
     } else {
@@ -31,7 +31,7 @@ UniversalDapp.prototype.render = function () {
     return this.$el;
 }
 
-UniversalDapp.prototype.getABIInputForm = function (){
+UniversalDApp.prototype.getABIInputForm = function (){
     var self = this;
     var $el = $('<div class="setup" />');
     console.log( 'creating abi input form')
@@ -48,7 +48,7 @@ UniversalDapp.prototype.getABIInputForm = function (){
 }
 
 
-UniversalDapp.prototype.getCreateInterface = function ($container, contract) {
+UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     var self = this;
     var $createInterface = $('<div class="create"/>');
     var $newButton = this.getInstanceInterface( contract )
@@ -57,7 +57,7 @@ UniversalDapp.prototype.getCreateInterface = function ($container, contract) {
     return $createInterface;
 }
 
-UniversalDapp.prototype.getInstanceInterface = function (contract, address) {
+UniversalDApp.prototype.getInstanceInterface = function (contract, address) {
     var self = this;
     console.log( contract )
     var abi = JSON.parse(contract.interface);
@@ -94,7 +94,7 @@ UniversalDapp.prototype.getInstanceInterface = function (contract, address) {
     return $createInterface;
 }
 
-UniversalDapp.prototype.getConstructorInterface = function(abi) {
+UniversalDApp.prototype.getConstructorInterface = function(abi) {
     var funABI = {'name':'','inputs':[],'type':'constructor','outputs':[]};
     for (var i = 0; i < abi.length; i++)
         if (abi[i].type == 'constructor') {
@@ -104,7 +104,7 @@ UniversalDapp.prototype.getConstructorInterface = function(abi) {
     return funABI;
 }
 
-UniversalDapp.prototype.getCallButton = function(args) {
+UniversalDApp.prototype.getCallButton = function(args) {
     var self = this;
     // args.abi, args.bytecode [constr only], args.address [fun only]
     // args.appendFunctions [constr only]
@@ -149,16 +149,16 @@ UniversalDapp.prototype.getCallButton = function(args) {
     return c.append(outputSpan);
 }
 
-UniversalDapp.prototype.clickNewContract = function ( self, $contract, contract ) {
+UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract ) {
     $contract.append( self.getInstanceInterface(contract) );
 }
 
-UniversalDapp.prototype.clickContractAt = function ( self, $contract, contract ) {
+UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract ) {
     var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )   
     $contract.append( self.getInstanceInterface(contract, address ) );
 }
 
-UniversalDapp.prototype.runTx = function( data, to, cb) {
+UniversalDApp.prototype.runTx = function( data, to, cb) {
     console.log( "runtx data: ", data )
     console.log( "runtx to:", to )
     var tx = new EthVm.Transaction({

@@ -16,7 +16,7 @@ For the truly Universal Dapp which has input for ABI and Bytecode you can do the
 	
 	<script>
         $(function(){
-            var dApp = new UniversalDapp([]);
+            var dApp = new UniversalDApp([]);
             $('body').append( dApp.render() )
         });
     </script>
@@ -27,7 +27,7 @@ If you'd like to use a universal DApp for a specific set of contracts, either al
 
 	<script>
         $(function(){
-            var dApp = new UniversalDapp([{
+            var dApp = new UniversalDApp([{
 				name: "{{name}}",
 				interface: "{{json abi interface}}",
 				bytecode: "{{compiled bytecode}}"
