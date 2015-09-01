@@ -35,9 +35,9 @@ UniversalDApp.prototype.getABIInputForm = function (){
     var self = this;
     var $el = $('<div class="setup" />');
     console.log( 'creating abi input form')
-    var $nameInput = $('<input type="text" placeholder="ContractName" value="Demo"/>')
-    var $abiInput = $('<input type="text" placeholder="[json ABI interface]"/>')
-    var $binaryInput = $('<input type="text" placeholder="COMPILED BINARY CONTRACT"/>')
+    var $nameInput = $('<input type="text" class="name" placeholder="ContractName"/>')
+    var $abiInput = $('<input type="text" class="abi" placeholder="[json ABI interface]"/>')
+    var $binaryInput = $('<input type="text" class="code" placeholder="BYTECODE"/>')
     var $createButton = $('<button />').text('Create DApp')
     $createButton.click(function(ev){
         self.contracts = [{name: $nameInput.val(), interface: $abiInput.val(), bytecode: $binaryInput.val() }]
