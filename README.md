@@ -1,7 +1,7 @@
 # Universal ÐApp
 
 
-Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with https://github.com/chriseth/browser-solidity or in cases where you have a ABI for an existing contract
+Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with https://github.com/chriseth/browser-solidity or in cases where you already have an ABI and/or bytecode for an existing contract
 
 ##How to use
 
