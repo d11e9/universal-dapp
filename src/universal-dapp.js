@@ -1,5 +1,6 @@
-function UniversalDApp (contracts) {
-    this.$el = $('<div class="dapp" />');
+function UniversalDApp (contracts, options) {
+    this.options = options || {};
+    this.$el = $('<div class="udapp" />');
     this.contracts = contracts;
     this.stateTrie = new EthVm.Trie();
     this.vm = new EthVm.VM(this.stateTrie);
@@ -14,6 +15,7 @@ function UniversalDApp (contracts) {
     this.account.balance = 'f00000000000000001';
     this.nonce = 0;
     this.stateTrie.put(this.address, this.account.serialize());
+
 }
 UniversalDApp.prototype.render = function () {
     if (this.contracts.length == 0) {
@@ -31,17 +33,28 @@ UniversalDApp.prototype.render = function () {
     return this.$el;
 }
 
-UniversalDApp.prototype.getABIInputForm = function (){
+UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
-    var $el = $('<div class="setup" />');
-    console.log( 'creating abi input form')
+    var $el = $('<div class="udapp-setup" />');
     var $nameInput = $('<input type="text" class="name" placeholder="ContractName"/>')
     var $abiInput = $('<input type="text" class="abi" placeholder="[json ABI interface]"/>')
     var $binaryInput = $('<input type="text" class="code" placeholder="BYTECODE"/>')
     var $createButton = $('<button />').text('Create DApp')
     $createButton.click(function(ev){
-        self.contracts = [{name: $nameInput.val(), interface: $abiInput.val(), bytecode: $binaryInput.val() }]
-        self.$el.empty().append( self.render() )
+        var contracts =  [{name: $nameInput.val(), interface: $abiInput.val(), bytecode: $binaryInput.val() }];
+        if (cb) {
+            var err = null;
+            var dapp = null;
+            try {
+                dapp = new UniversalDApp( contracts, self.options );
+            } catch(e) {
+                err = e;
+            }
+            cb( err, dapp )
+        } else {
+            self.contracts = contracts;
+            self.$el.empty().append( self.render() )
+        }
     })
     $el.append( $nameInput ).append( $abiInput ).append( $binaryInput ).append( $createButton )
     return $el;
@@ -51,15 +64,19 @@ UniversalDApp.prototype.getABIInputForm = function (){
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     var self = this;
     var $createInterface = $('<div class="create"/>');
+    if (this.options.removeable) {
+        var $close = $('<div class="udapp-close" />')
+        $close.click( function(){ self.$el.remove(); } )
+        $createInterface.append( $close );
+    }
     var $newButton = this.getInstanceInterface( contract )
     var $atButton = $('<button class="at"/>').text('At Address').click( function(){ self.clickContractAt( self, $container, contract ) } );
     $createInterface.append( $atButton ).append( $newButton );
     return $createInterface;
 }
 
-UniversalDApp.prototype.getInstanceInterface = function (contract, address) {
+UniversalDApp.prototype.getInstanceInterface = function (contract, address, $target) {
     var self = this;
-    console.log( contract )
     var abi = JSON.parse(contract.interface);
     var funABI = this.getConstructorInterface(abi);
     var $createInterface = $('<div class="createContract"/>');
@@ -81,14 +98,14 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address) {
 
     
 
-    if (!address) {
+    if (!address || !$target) {
         $createInterface.append( this.getCallButton({
             abi: funABI,
             bytecode: contract.bytecode,
             appendFunctions: appendFunctions
         }));
     } else {
-        appendFunctions( address, $el );
+        appendFunctions( address, $target );
     }
     
     return $createInterface;
@@ -127,7 +144,6 @@ UniversalDApp.prototype.getCallButton = function(args) {
             if (isConstructor)
                 data = args.bytecode + data.slice(8);
             outputSpan.text('...');
-            console.log( data )
             self.runTx(data, args.address, function(err, result) {
                 if (err)
                     outputSpan.text(err);
@@ -155,7 +171,7 @@ UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract 
 
 UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract ) {
     var address = prompt( "What Address is this contract at in the Blockchain? ie: '0xdeadbeaf...'" )   
-    $contract.append( self.getInstanceInterface(contract, address ) );
+    self.getInstanceInterface(contract, address, $contract );
 }
 
 UniversalDApp.prototype.runTx = function( data, to, cb) {

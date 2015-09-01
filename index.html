@@ -6,20 +6,47 @@
         <script src="libs/web3.min.js"></script>
         <script src="libs/ethereumjs-vm.js"></script>
         <script src="src/universal-dapp.js"></script>
+        <link rel="stylesheet" href="src/universal-dapp.css">
+
+        <style>
+            
+            body {
+                margin: 0;
+                padding: 2em;
+                font-family: monospace;
+            }
+
+            #new {
+                max-width: 33em;
+                margin: 4em auto;
+            }
+
+            #dapps {
+                overflow: auto;
+            }
+
+            #dapps .udapp {
+                float: left;
+                width: 25em;
+                margin-right: 1em;
+                margin-bottom: 1em;
+            }
+        
+        </style>
     </head>
     <body>
 
-        <h1>Universal DApp</h1>    
+        <h1>Universal DApp</h1>
 
-        <style>
-        
-            .setup input,
-            .setup button {
-                display: block;
-                width: 100%;
-            }
-    
-        </style>
+        <p>Documentation / Source: <a href="https://github.com/d11e9/universal-dapp">https://github.com/d11e9/universal-dapp</a></p>
+
+        <p>
+            Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like <a href="https://github.com/chriseth/browser-solidity">browser-solidity</a>a> or in cases where you already have an ABI and/or bytecode for an existing contract
+        </p>
+
+        <div id="new"></div>
+
+        <div id="dapps"></div>
 
         <script>
             $(function(){
@@ -28,16 +55,24 @@
                 var myABI = '[{"constant":false,"inputs":[],"name":"foo","outputs":[{"name":"","type":"address"}],"type":"function"},{"inputs":[{"name":"myAddress","type":"address"}],"type":"constructor"}]';
                 var myCode = '606060405260405160208060f08339016040526060805190602001505b80600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055505b50609a8060566000396000f30060606040526000357c010000000000000000000000000000000000000000000000000000000090048063c2985578146037576035565b005b6040600450606c565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690506097565b9056';
 
-                // new UniversalDApp({name: myName, interface: myABI, bytecode: myCode })
-                var dApp = new UniversalDApp([]);
-
-                $('body').append( dApp.render() )
+                // var dapp = new UniversalDApp({name: myName, interface: myABI, bytecode: myCode })
+                // $('#dapps').append( dapp.render() )
+                
 
                 // fill in some defaults for demo. this is not the way you would do it.
                 // in practice you would do it as in the comment above
-                $('.setup .name').val(myName);
-                $('.setup .abi').val(myABI);
-                $('.setup .code').val(myCode);
+
+                var dapp = new UniversalDApp([], { removeable: true });
+
+                $('#new').append( dapp.getABIInputForm( function(err, d){
+                    console.log( d )
+                    if (err) console.error( err )
+                    else $('#dapps').append( d.render() )
+                }))
+
+                $('.udapp-setup .name').val(myName);
+                $('.udapp-setup .abi').val(myABI);
+                $('.udapp-setup .code').val(myCode);
                 
             });
 

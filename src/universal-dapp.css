@@ -1,0 +1,61 @@
+       
+.udapp {
+	padding: 1em;
+	border: 1px solid #333;
+	position: relative;
+}
+
+.udapp input,
+.udapp button,
+.udapp-setup input,
+.udapp-setup button {
+    display: block;
+    width: 100%;
+    padding: 0.6em;
+    box-sizing: border-box;
+}
+
+.udapp-setup input {
+	margin-bottom: 1em;
+}
+
+.udapp .create {
+	overflow: auto;
+	margin-bottom: 1em;
+}
+
+.udapp .create .output {
+	padding: 1em;
+    clear: both;
+}
+
+.udapp .output:empty {
+	display: none;
+}
+
+.udapp-close:before {
+	position: absolute;
+    top: .4em;
+    right: .4em;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    content: "x";
+    cursor: pointer;
+}
+
+.udapp .create input,
+.udapp .create button {
+	width: 33%;
+	display: block;
+	float: left;
+}
+
+.udapp .instance {
+	padding: 0.4em;
+	background-color: #ccc;
+}
+
+.udapp .instance .contractProperty {
+	overflow: auto;
+}
