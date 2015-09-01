@@ -23,10 +23,15 @@ UniversalDApp.prototype.render = function () {
     } else {
 
         for (var c in this.contracts) {
-            var $title = $('<span class="title"/>').text( this.contracts[c].name );
             var $contractEl = $('<div class="contract"/>');
-            $contractEl.append( $title, this.getCreateInterface( $contractEl, this.contracts[c]) );
-            
+
+            $contractEl.append( $title );
+            if (this.contracts[c].address) {
+                this.getInstanceInterface(this.contracts[c], this.contracts[c].address, $contractEl );
+            } else {
+                var $title = $('<span class="title"/>').text( this.contracts[c].name );
+                $contractEl.append( $title, this.getCreateInterface( $contractEl, this.contracts[c]) );
+            }
             this.$el.append( $contractEl );
         }
     }
@@ -64,7 +69,7 @@ UniversalDApp.prototype.getABIInputForm = function (cb){
 UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
     var self = this;
     var $createInterface = $('<div class="create"/>');
-    if (this.options.removeable) {
+    if (this.options.removable) {
         var $close = $('<div class="udapp-close" />')
         $close.click( function(){ self.$el.remove(); } )
         $createInterface.append( $close );
@@ -84,6 +89,11 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
     var appendFunctions = function (address, $el){
         
         var $instance = $('<div class="instance"/>');
+        if (self.options.removable_instances) {
+            var $close = $('<div class="udapp-instance-close" />')
+            $close.click( function(){ $instance.remove(); } )
+            $instance.append( $close );
+        }
         var $title = $('<span class="title"/>').text( contract.name + " at " + address.toString('hex') );
         $instance.append( $title );
         $.each(abi, function(i, funABI) {
@@ -146,7 +156,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
             outputSpan.text('...');
             self.runTx(data, args.address, function(err, result) {
                 if (err)
-                    outputSpan.text(err);
+                    outputSpan.text(err).addClass('error');
                 else if (isConstructor) {
                     outputSpan.text(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
                     args.appendFunctions(result.createdAddress);
@@ -177,13 +187,17 @@ UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract )
 UniversalDApp.prototype.runTx = function( data, to, cb) {
     console.log( "runtx data: ", data )
     console.log( "runtx to:", to )
-    var tx = new EthVm.Transaction({
-        nonce: new Buffer([this.nonce++]), //@todo count beyond 255
-        gasPrice: '01',
-        gasLimit: '3000000',
-        to: to,
-        data: data
-    });
-    tx.sign(new Buffer(this.secretKey, 'hex'));
-    this.vm.runTx({tx: tx}, cb);
+    try {
+        var tx = new EthVm.Transaction({
+            nonce: new Buffer([this.nonce++]), //@todo count beyond 255
+            gasPrice: '01',
+            gasLimit: '3000000',
+            to: to,
+            data: data
+        });
+        tx.sign(new Buffer(this.secretKey, 'hex'));
+        this.vm.runTx({tx: tx}, cb);
+    } catch (e) {
+        cb( e, null );
+    }
 }

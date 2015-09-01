@@ -24,9 +24,18 @@
 	margin-bottom: 1em;
 }
 
-.udapp .create .output {
+.udapp .title {
+	margin-bottom: 0.4em;
+	display: inline-block;
+}
+
+.udapp .output {
 	padding: 1em;
     clear: both;
+}
+
+.udapp .output.error {
+	background-color: rgba( 255, 0, 0, 0.5);
 }
 
 .udapp .output:empty {
@@ -54,6 +63,11 @@
 .udapp .instance {
 	padding: 0.4em;
 	background-color: #ccc;
+}
+
+.udapp .instance input,
+.udapp .instance button {
+	width: 50%;
 }
 
 .udapp .instance .contractProperty {

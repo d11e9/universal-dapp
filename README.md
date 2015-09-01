@@ -8,13 +8,13 @@ Is a Universal Interface for contracts on the Ethereum blockchain. Best used in 
 
 Include the source and its dependencies in your html.
 
-	<script src="lib/ethereumjs-vm.js"></script>
-	<script src="lib/web3.min.js"></script>
-	<script src="src/universal-dapp.js"></script>
+    <script src="lib/ethereumjs-vm.js"></script>
+    <script src="lib/web3.min.js"></script>
+    <script src="src/universal-dapp.js"></script>
 
 For the truly Universal Dapp which has input for ABI and Bytecode you can do the following:
-	
-	<script>
+    
+    <script>
         $(function(){
             var dApp = new UniversalDApp([]);
             $('body').append( dApp.render() )
@@ -25,16 +25,32 @@ For the truly Universal Dapp which has input for ABI and Bytecode you can do the
 If you'd like to use a universal DApp for a specific set of contracts, either already in the blockchain or in the form of compiled bytecode and ABI, you can do the following: 
 
 
-	<script>
+    <script>
         $(function(){
             var dApp = new UniversalDApp([{
-				name: "{{name}}",
-				interface: "{{json abi interface}}",
-				bytecode: "{{compiled bytecode}}"
+                name: "{{name}}",
+                interface: "{{json abi interface}}",
+                bytecode: "{{compiled bytecode}}"
             }]);
             $('body').append( dApp.render() )
         });
     </script>
+
+
+Or if you just need an interafce for an existing contract you can provide its address directly
+
+    <script>
+        $(function(){
+            var dApp = new UniversalDApp([{
+                name: "{{name}}",
+                interface: "{{json abi interface}}",
+                address: {{address hex}}
+            }]);
+            $('body').append( dApp.render() )
+        });
+    </script>
+
+
 
 ###Example
 
