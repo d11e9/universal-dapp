@@ -2,7 +2,7 @@
 
 Demo: [http://d11e9.github.com/universal-dapp](http://d11e9.github.com/universal-dapp)
 
-Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with [A Contract compiler](https://github.com/chriseth/browser-solidity) or in cases where you already have an ABI and/or bytecode for an existing contract
+Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like [browser-solidity](https://github.com/chriseth/browser-solidity) or in cases where you already have an ABI and/or bytecode for an existing contract
 
 ##How to use
 
