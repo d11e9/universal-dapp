@@ -1,7 +1,7 @@
 # Universal ÐApp
 
 
-Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with https://github.com/d11e9/browser-solidity or in cases where you have a ABI for an existing contract
+Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with https://github.com/chriseth/browser-solidity or in cases where you have a ABI for an existing contract
 
 ##Examples
 
@@ -31,7 +31,7 @@ If you'd like to use a universal DApp for a specific set of contracts, either al
 
 ##Acknowledgements
 
-In its current form **UniversalÐApp** is a directly copy paste of parts of [chriseth](https://github.com/chriseth)'s browser based [Solidty compiler](https://github.com/chriseth/browser-solidity).
+In its current form **UniversalÐApp** is a direct copy/paste of parts of [chriseth](https://github.com/chriseth)'s browser based [Solidty compiler](https://github.com/chriseth/browser-solidity).
 
 ##Caveats
 
