@@ -28,3 +28,13 @@ If you'd like to use a universal DApp for a specific set of contracts, either al
             $('body').append( dApp.render() )
         });
     </script>
+
+##Acknowledgements
+
+In its current form **UniversalÐApp** is a directly copy paste of parts of [chriseth](https://github.com/chriseth)'s browser based [Solidty compiler](https://github.com/chriseth/browser-solidity).
+
+##Caveats
+
+Currently **UniversalÐApp** works exclusively inside of a JavaScript Ethereum VM ([ethereumjs-vm](https://github.com/ethereum/ethereumjs-vm)) by [wanderer](https://github.com/wanderer).
+
+Going forward we plan to add proper [web3.js](https://github.com/ethereum/web3.js) support to deploy and interact with contracts live on the Ethereum Blockchain.

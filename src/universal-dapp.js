@@ -36,8 +36,8 @@ UniversalDapp.prototype.getABIInputForm = function (){
     var $el = $('<div class="setup" />');
     console.log( 'creating abi input form')
     var $nameInput = $('<input type="text" placeholder="ContractName" value="Demo"/>')
-    var $abiInput = $('<input type="text" placeholder="[json ABI interface]" value=\'[{"constant":false,"inputs":[],"name":"foo","outputs":[{"name":"","type":"address"}],"type":"function"},{"inputs":[{"name":"myAddress","type":"address"}],"type":"constructor"}]'/>')
-    var $binaryInput = $('<input type="text" placeholder="COMPILED BINARY CONTRACT" value="606060405260405160208060f08339016040526060805190602001505b80600060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908302179055505b50609a8060566000396000f30060606040526000357c010000000000000000000000000000000000000000000000000000000090048063c2985578146037576035565b005b6040600450606c565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6000600060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1690506097565b9056"/>')
+    var $abiInput = $('<input type="text" placeholder="[json ABI interface]"/>')
+    var $binaryInput = $('<input type="text" placeholder="COMPILED BINARY CONTRACT"/>')
     var $createButton = $('<button />').text('Create DApp')
     $createButton.click(function(ev){
         self.contracts = [{name: $nameInput.val(), interface: $abiInput.val(), bytecode: $binaryInput.val() }]
