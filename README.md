@@ -62,6 +62,6 @@ In its initial form this project was a direct copy/paste of parts of [chriseth](
 
 ##Caveats
 
-Currently **UniversalÐApp** works ~~exclusively~~ inside of a JavaScript Ethereum VM ([ethereumjs-vm](https://github.com/ethereum/ethereumjs-vm)) by [wanderer](https://github.com/wanderer).
+Currently works ~~exclusively~~ inside of a JavaScript Ethereum VM ([ethereumjs-vm](https://github.com/ethereum/ethereumjs-vm)) by [wanderer](https://github.com/wanderer).
 
 There is alpha support for [web3.js](https://github.com/ethereum/web3.js) connections to a local Ethereum Node, to deploy and interact with contracts live on the Ethereum Blockchain.
