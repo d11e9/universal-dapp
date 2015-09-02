@@ -1,8 +1,18 @@
 
 .udapp {
 	padding: 1em;
-	border: 1px solid #333;
+	border: 1px dotted #4D5686;
 	position: relative;
+	margin: 0.5em;
+	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.udapp a {
+	color: #7A7AE2;
+}
+
+.udapp a:visited {
+	color: #7A7AE2;
 }
 
 .udapp input,
@@ -44,10 +54,8 @@
 	padding: 0.2em;
     background-color: rgba( 255,255,255,0.5 );
     display: block;
+    font-weight: bold;
 }
-
-
-
 
 .udapp .output {
 	padding: 1em;
@@ -84,6 +92,10 @@
 
 .udapp .instance:last-child {
 	margin-bottom: 0;
+}
+
+.udapp .instance .title {
+	cursor: pointer;
 }
 
 .udapp .instance.hide .title {
@@ -149,7 +161,7 @@
 	background-color: #D42828;
 }
 
-.udapp .contractProperty .constant {
+.udapp .contractProperty.constant .call {
 	background-color: #556DF3;
 }
 

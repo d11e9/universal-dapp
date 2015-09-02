@@ -41,12 +41,14 @@ UniversalDApp.prototype.render = function () {
             this.$el.append( $contractEl );
         }
     }
-    this.$el.append( $('<div class="poweredBy" />').html("Universal ÐApp powered by The Blockchain") )
     $legend = $('<div class="legend" />')
         .append( $('<div class="attach"/>').text('Attach') )
         .append( $('<div class="transact"/>').text('Transact') )
         .append( $('<div class="call"/>').text('Call') )
-    
+
+    this.$el.append( $('<div class="poweredBy" />')
+        .html("<a href='http://github.com/d11e9/universal-dapp'>Universal ÐApp</a> powered by The Blockchain") )
+
     this.$el.append( $legend )
     return this.$el;
 }
@@ -93,7 +95,13 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
 
 UniversalDApp.prototype.getInstanceInterface = function (contract, address, $target) {
     var self = this;
-    var abi = JSON.parse(contract.interface);
+    var abi = JSON.parse(contract.interface).sort(function(a,b){
+        if (a.name > b.name) return -1;
+        else return 1;
+    }).sort(function(a,b){
+        if (a.constant == true) return -1;
+        else return 1;
+    });
     var funABI = this.getConstructorInterface(abi);
     var $createInterface = $('<div class="createContract"/>');
 
@@ -158,7 +166,6 @@ UniversalDApp.prototype.getCallButton = function(args) {
     var inputField = $('<input/>').attr('placeholder', inputs);
     var outputSpan = $('<div class="output"/>');
     var button = $('<button />')
-        .toggleClass( 'constant', !isConstructor && args.abi.constant )
         .addClass( 'call' )
         .text(args.bytecode ? 'Create' : fun.displayName())
         .click(function() {
@@ -206,8 +213,9 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var $contractProperty = $('<div class="contractProperty"/>');
     $contractProperty
-        .toggleClass('hasArgs', args.abi.inputs.length > 0)
-        .toggleClass('constructor', isConstructor)
+        .toggleClass( 'constant', !isConstructor && args.abi.constant )
+        .toggleClass( 'hasArgs', args.abi.inputs.length > 0)
+        .toggleClass( 'constructor', isConstructor)
         .append(button).append(inputField);
     return $contractProperty.append(outputSpan);
 }
