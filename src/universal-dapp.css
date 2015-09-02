@@ -39,7 +39,13 @@
 .udapp .title {
 	margin-bottom: 0.4em;
 	display: inline-block;
+	padding: 0.2em;
+    background-color: rgba( 255,255,255,0.5 );
+    display: block;
 }
+
+
+
 
 .udapp .output {
 	padding: 1em;
@@ -75,6 +81,25 @@
 
 .udapp .instance:last-child {
 	margin-bottom: 0;
+}
+
+.udapp .instance.hide .title {
+    margin-bottom: 0;
+}
+
+.udapp .instance .title:before {
+    content: "\25BC";
+    opacity: 0.5;
+    margin-right: 0.4em;
+    font-size: 10px;
+}
+
+.udapp .instance.hide > *:not(.title) {
+	display: none;
+}
+
+.udapp .instance.hide > .title:before {
+    content: "\25B6";
 }
 
 

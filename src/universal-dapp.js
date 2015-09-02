@@ -100,6 +100,9 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $instance.append( $close );
         }
         var $title = $('<span class="title"/>').text( contract.name + " at " + address.toString('hex') );
+        $title.click(function(){
+            $instance.toggleClass('hide');
+        })
         $instance.append( $title );
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
