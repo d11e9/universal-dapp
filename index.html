@@ -1,7 +1,8 @@
 <!doctype html>
 <html>
     <head>
-        <title>Universal DApp</title>
+        <meta charset="utf-8">
+        <title>Universal ÐApp</title>
         <script src="libs/jquery-2.1.3.min.js"></script>
         <script src="libs/web3.min.js"></script>
         <script src="libs/ethereumjs-vm.js"></script>
@@ -16,23 +17,48 @@
                 font-family: monospace;
             }
 
+            #info {
+                width: 50%;
+                float: left;
+                padding-right: 1em;
+                box-sizing: border-box;
+                margin-bottom: 2em;
+            }
+
             #new {
-                max-width: 33em;
-                margin: 4em auto;
+                min-width: 50%;
+                width: 50%;
+                float: right;
+                margin-top: 3em;
+                margin-bottom: 2em;
+            }
+
+            #new textarea { 
+                height: 10em;
             }
 
             #dapps {
                 overflow: auto;
+                clear: both;
             }
 
             #dapps .udapp {
                 float: left;
-                width: 25em;
+                width: 36em;
                 margin-right: 1em;
                 margin-bottom: 1em;
             }
 
             @media screen and (max-width: 600px) {
+
+                #info, #new {
+                    width: 100%;
+                    padding: 0;
+                    float: none;
+                    margin: 0;
+                    margin-bottom: 1em;
+                }
+
                 #dapps .udapp {
                     width: 100%;
                     box-sizing: border-box;
@@ -43,17 +69,16 @@
     </head>
     <body>
 
-        <h1>Universal DApp</h1>
+        <div id="info">
+            <h1>Universal ÐApp</h1>
 
-        <p>Documentation / Source: <a href="https://github.com/d11e9/universal-dapp">https://github.com/d11e9/universal-dapp</a></p>
+            <p>Documentation / Source: <a href="https://github.com/d11e9/universal-dapp">https://github.com/d11e9/universal-dapp</a></p>
 
-        <p>
-            Is a Universal Interface or (DApp) for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like <a href="https://github.com/chriseth/browser-solidity">browser-solidity</a> or in cases where you already have an ABI and/or bytecode for an existing contract
-        </p>
+            <p>A Universal Interface or (ÐApp) for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like <a href="https://github.com/d11e9/browser-solidity">browser-solidity</a> or in cases where you already have an ABI and/or bytecode for an existing contract</p>
 
-        <p>By default universal dapp runs only in a VM</p>
-        <p><label><input  id="novm" type="checkbox" /> Use local Node (warning! alpha software)</label></p>
-
+            <p>By default universal dapp runs only in a VM</p>
+            <p><label><input  id="novm" type="checkbox" /> Use local Node (warning! alpha software)</label></p>
+        </div>
         <div id="new"></div>
 
         <div id="dapps"></div>

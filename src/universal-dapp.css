@@ -85,6 +85,8 @@
 
 .udapp .instance.hide .title {
     margin-bottom: 0;
+    padding-right: 1.5em;
+    word-wrap: break-word;
 }
 
 .udapp .instance .title:before {
@@ -162,4 +164,11 @@
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 	border-right: 0;
+}
+
+
+.udapp .poweredBy {
+	float: right;
+	color: #666;
+	font-size: 12px;
 }
