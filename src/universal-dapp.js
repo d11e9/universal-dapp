@@ -165,28 +165,47 @@ UniversalDApp.prototype.getCallButton = function(args) {
     if (!args.bytecode && !fun.displayName()) return;
     var inputField = $('<input/>').attr('placeholder', inputs);
     var outputSpan = $('<div class="output"/>');
+
+    function getReturnOutput(result) {
+        return $('<div class="returned">').text(' Returned: ' + JSON.stringify( result ) )
+    }
+
+    function getGasUsedOutput(result) {
+        return $('<div class="gasUsed">').text(' Cost: ' + result.gasUsed.toString(10) + ' gas.' + ((args.abi.constant && !isConstructor) ? '(Only when performed by a contract)' : '') )
+    }
+
+    function getOutput() {
+        var values = Array.prototype.slice.call(arguments);
+        var $result = $('<div class="result" />');
+        var $close = $('<div class="udapp-close" />')
+            $close.click( function(){ $result.remove(); } )
+            $result.append( $close );
+        for( var v in values ) { $result.append( values[v] ); } 
+        return $result;
+    }
+
     var button = $('<button />')
         .addClass( 'call' )
         .text(args.bytecode ? 'Create' : fun.displayName())
         .click(function() {
             var funArgs = $.parseJSON('[' + inputField.val() + ']');
             var data = fun.toPayload(funArgs).data;
-            console.log( funArgs )
             if (data.slice(0, 2) == '0x') data = data.slice(2);
             if (isConstructor)
                 data = args.bytecode + data.slice(8);
-            outputSpan.html('<a href="#" title="Waiting for transaction to be mined.">...</a>');
+            $result = getOutput( $('<a href="#" title="Waiting for transaction to be mined.">...</a>') );
+
+            outputSpan.append( $result );
             self.runTx(data, args.address, function(err, result) {
                 if (err)
-                    outputSpan.text(err).addClass('error');
+                    $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
                 else if (self.options.vm && isConstructor) {
-                    outputSpan.html(' Creation used ' + result.vm.gasUsed.toString(10) + ' gas.');
+                    $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
                     args.appendFunctions(result.createdAddress);
                 } else if (self.options.vm){
                     var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-                    outputSpan.html(' Returned: ' + JSON.stringify(outputObj));
+                    $result.replaceWith( getOutput( getReturnOutput( outputObj ), getGasUsedOutput( result.vm ) ) );
                 } else {
-                    console.log( err, result )
                     if (!err) {
 
                         function tryTillResponse (txhash, done) {
@@ -194,7 +213,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                             function testResult (err, address) {
                                 if (!err && !address) {
-                                    console.log( "retrying....")
+                                    console.log( "Polling for tx receipt....")
                                     setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
                                 } else done( err, address )
                             }
@@ -202,10 +221,12 @@ UniversalDApp.prototype.getCallButton = function(args) {
                         }
                         tryTillResponse( result, function(err, result) {
                             if (isConstructor) {
-                                outputSpan.html('');
+                                $result.html('');
                                 args.appendFunctions(result.contractAddress);
-                            } else outputSpan.html(' Returned: ' + JSON.stringify( result ) );
+                            } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
                         })
+                    } else {
+                        console.log( err, result )
                     }
                 }
             });

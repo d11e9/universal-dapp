@@ -63,9 +63,16 @@
     word-wrap: break-word;
 }
 
-.udapp .output.error {
-	background-color: rgba( 255, 0, 0, 0.5);
+.udapp .output .error {
+	color: red;
 }
+
+.udapp .output .result {
+	position: relative;
+	margin-bottom: 0.5em;
+}
+
+.udapp .output .result:last-child { margin: 0; }
 
 .udapp .output:empty {
 	display: none;
