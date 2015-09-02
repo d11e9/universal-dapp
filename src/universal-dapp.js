@@ -41,7 +41,13 @@ UniversalDApp.prototype.render = function () {
             this.$el.append( $contractEl );
         }
     }
-    this.$el.append( $('<div class="poweredBy" />').html("Universal ÐApp powered by Ethereum") )
+    this.$el.append( $('<div class="poweredBy" />').html("Universal ÐApp powered by The Blockchain") )
+    $legend = $('<div class="legend" />')
+        .append( $('<div class="attach"/>').text('Attach') )
+        .append( $('<div class="transact"/>').text('Transact') )
+        .append( $('<div class="call"/>').text('Call') )
+    
+    this.$el.append( $legend )
     return this.$el;
 }
 
@@ -49,7 +55,7 @@ UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
     var $el = $('<div class="udapp-setup" />');
     var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytyecode, "interface": abi }, { ... } ]\'/>')
-    var $createButton = $('<button class="udapp-create"/>').text('Create Universal ÐApp')
+    var $createButton = $('<button class="udapp-create"/>').text('Create a Universal ÐApp')
     $createButton.click(function(ev){
         var contracts =  $.parseJSON( $jsonInput.val() );
         if (cb) {

@@ -122,7 +122,7 @@
 }
 
 .udapp .atAddress {
-	background-color: green;
+	background-color: #62B762;
 	margin-right: 1em;
 	border-radius: 0.5em;
 }
@@ -169,6 +169,29 @@
 	border-right: 0;
 }
 
+.udapp .legend {
+	font-size: 12px;
+	float: left;
+	color: #666;
+}
+
+.udapp .legend div {
+	display: inline-block;
+	margin-right: 0.5em;
+}
+.udapp .legend div:before {
+	content: ".";
+	color: transparent;
+	display: inline-block;
+	background-color: #ccc;
+	height: 1em;
+	margin-right: 0.5em;
+	width: 1em;
+}
+
+.udapp .legend .attach:before { background-color: #62B762; }
+.udapp .legend .transact:before { background-color: #D42828; }
+.udapp .legend .call:before { background-color: #556DF3; }
 
 .udapp .poweredBy {
 	float: right;
