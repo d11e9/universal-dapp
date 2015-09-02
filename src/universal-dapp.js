@@ -49,7 +49,7 @@ UniversalDApp.prototype.getABIInputForm = function (cb){
     var self = this;
     var $el = $('<div class="udapp-setup" />');
     var $jsonInput = $('<textarea class="json" placeholder=\'[ { "name": name, "bytecode": bytyecode, "interface": abi }, { ... } ]\'/>')
-    var $createButton = $('<button />').text('Create Universal DApp')
+    var $createButton = $('<button class="udapp-create"/>').text('Create Universal DApp')
     $createButton.click(function(ev){
         var contracts =  $.parseJSON( $jsonInput.val() );
         if (cb) {
@@ -80,7 +80,7 @@ UniversalDApp.prototype.getCreateInterface = function ($container, contract) {
         $createInterface.append( $close );
     }
     var $newButton = this.getInstanceInterface( contract )
-    var $atButton = $('<button class="at"/>').text('At Address').click( function(){ self.clickContractAt( self, $container, contract ) } );
+    var $atButton = $('<button class="atAddress"/>').text('At Address').click( function(){ self.clickContractAt( self, $container, contract ) } );
     $createInterface.append( $atButton ).append( $newButton );
     return $createInterface;
 }
@@ -148,7 +148,9 @@ UniversalDApp.prototype.getCallButton = function(args) {
     if (!args.bytecode && !fun.displayName()) return;
     var inputField = $('<input/>').attr('placeholder', inputs);
     var outputSpan = $('<div class="output"/>');
-    var button = $('<button/>')
+    var button = $('<button />')
+        .toggleClass( 'constant', !isConstructor && args.abi.constant )
+        .addClass( 'call' )
         .text(args.bytecode ? 'Create' : fun.displayName())
         .click(function() {
             var funArgs = $.parseJSON('[' + inputField.val() + ']');
@@ -192,13 +194,13 @@ UniversalDApp.prototype.getCallButton = function(args) {
                 }
             });
         });
-    if (!isConstructor)
-        button.addClass('runButton');
-    var c = $('<div class="contractProperty"/>')
-        .append(button);
-    if (args.abi.inputs.length > 0)
-        c.append(inputField);
-    return c.append(outputSpan);
+
+    var $contractProperty = $('<div class="contractProperty"/>');
+    $contractProperty
+        .toggleClass('hasArgs', args.abi.inputs.length > 0)
+        .toggleClass('constructor', isConstructor)
+        .append(button).append(inputField);
+    return $contractProperty.append(outputSpan);
 }
 
 UniversalDApp.prototype.clickNewContract = function ( self, $contract, contract ) {
