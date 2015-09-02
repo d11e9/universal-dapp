@@ -171,7 +171,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
     }
 
     function getGasUsedOutput(result) {
-        return $('<div class="gasUsed">').text(' Cost: ' + result.gasUsed.toString(10) + ' gas.' + ((args.abi.constant && !isConstructor) ? '(Only when performed by a contract)' : '') )
+        return $('<div class="gasUsed">').text(' Cost: ' + result.gasUsed.toString(10) + ' gas.' )
     }
 
     function getOutput() {
@@ -193,41 +193,40 @@ UniversalDApp.prototype.getCallButton = function(args) {
             if (data.slice(0, 2) == '0x') data = data.slice(2);
             if (isConstructor)
                 data = args.bytecode + data.slice(8);
-            $result = getOutput( $('<a href="#" title="Waiting for transaction to be mined.">...</a>') );
+            $result = getOutput( $('<a href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
 
             outputSpan.append( $result );
-            self.runTx(data, args.address, function(err, result) {
-                if (err)
+            self.runTx(data, args, function(err, result) {
+                if (err) {
                     $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
-                else if (self.options.vm && isConstructor) {
+                } else if (self.options.vm && isConstructor) {
                     $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
                     args.appendFunctions(result.createdAddress);
                 } else if (self.options.vm){
                     var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
                     $result.replaceWith( getOutput( getReturnOutput( outputObj ), getGasUsedOutput( result.vm ) ) );
+                } else if (args.abi.constant && !isConstructor) {
+                    $result.replaceWith( getOutput( getReturnOutput( result ) ) );
                 } else {
-                    if (!err) {
+                    
+                    function tryTillResponse (txhash, done) {
+                        web3.eth.getTransactionReceipt(result, testResult );
 
-                        function tryTillResponse (txhash, done) {
-                            web3.eth.getTransactionReceipt(result, testResult );
-
-                            function testResult (err, address) {
-                                if (!err && !address) {
-                                    console.log( "Polling for tx receipt....")
-                                    setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
-                                } else done( err, address )
-                            }
-
+                        function testResult (err, address) {
+                            if (!err && !address) {
+                                console.log( "Polling for tx receipt....")
+                                setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
+                            } else done( err, address )
                         }
-                        tryTillResponse( result, function(err, result) {
-                            if (isConstructor) {
-                                $result.html('');
-                                args.appendFunctions(result.contractAddress);
-                            } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
-                        })
-                    } else {
-                        console.log( err, result )
+
                     }
+                    tryTillResponse( result, function(err, result) {
+                        if (isConstructor) {
+                            $result.html('');
+                            args.appendFunctions(result.contractAddress);
+                        } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
+                    })
+                
                 }
             });
         });
@@ -250,16 +249,31 @@ UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract )
     self.getInstanceInterface(contract, address, $contract );
 }
 
-UniversalDApp.prototype.runTx = function( data, to, cb) {
+UniversalDApp.prototype.runTx = function( data, args, cb) {
+    var to = args.address;
+    var constant = args.abi.constant;
+    
     if (!this.vm) {
-        web3.eth.sendTransaction({
-            from: web3.eth.accounts[0],
-            to: to,
-            data: data,
-            gas: 1000000
-        }, function(err, resp) {
-            cb( err, resp )
-        })
+        if (constant) {
+            web3.eth.call({
+                from: web3.eth.accounts[0],
+                to: to,
+                data: data,
+                gas: 1000000
+            }, function(err, resp) {
+                cb( err, resp )
+            })
+        } else {
+            web3.eth.sendTransaction({
+                from: web3.eth.accounts[0],
+                to: to,
+                data: data,
+                gas: 1000000
+            }, function(err, resp) {
+                console.log( 'sendTx callback:', err, resp )
+                cb( err, resp )
+            })
+        }
     } else {
         console.log( "runtx data: ", data )
         console.log( "runtx to:", to )
