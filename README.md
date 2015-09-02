@@ -2,7 +2,7 @@
 
 Demo: [http://d11e9.github.com/universal-dapp](http://d11e9.github.com/universal-dapp)
 
-Is a Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like [browser-solidity](https://github.com/chriseth/browser-solidity) or in cases where you already have an ABI and/or bytecode for an existing contract
+A Universal Interface for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like [browser-solidity](https://d11e9.github.io/browser-solidity) or in cases where you already have an ABI and/or bytecode for an existing contract
 
 ##How to use
 
@@ -12,7 +12,7 @@ Include the source and its dependencies in your html.
     <script src="lib/web3.min.js"></script>
     <script src="src/universal-dapp.js"></script>
 
-For the truly Universal Dapp which has input for ABI and Bytecode you can do the following:
+For the Universal-Universal Dapp which has input for ABI and Bytecode you can do the following:
     
     <script>
         $(function(){
@@ -37,7 +37,7 @@ If you'd like to use a universal DApp for a specific set of contracts, either al
     </script>
 
 
-Or if you just need an interafce for an existing contract you can provide its address directly
+Or if you just need an interface for an existing contract you can provide its address directly. In the example below we omit the `bytecode` property wich prevents the uDApp from creating new contracts.
 
     <script>
         $(function(){
@@ -58,10 +58,10 @@ Check out the `gh-pages` branch [index.html](http://d11e9.github.com/universal-d
 
 ##Acknowledgements
 
-In its current form **UniversalÐApp** is a direct copy/paste of parts of [chriseth](https://github.com/chriseth)'s browser based [Solidty compiler](https://github.com/chriseth/browser-solidity).
+In its initial form this project was a direct copy/paste of parts of [chriseth](https://github.com/chriseth)'s browser based [Solidty compiler](https://github.com/chriseth/browser-solidity).
 
 ##Caveats
 
-Currently **UniversalÐApp** works exclusively inside of a JavaScript Ethereum VM ([ethereumjs-vm](https://github.com/ethereum/ethereumjs-vm)) by [wanderer](https://github.com/wanderer).
+Currently **UniversalÐApp** works ~~exclusively~~ inside of a JavaScript Ethereum VM ([ethereumjs-vm](https://github.com/ethereum/ethereumjs-vm)) by [wanderer](https://github.com/wanderer).
 
-Going forward we plan to add proper [web3.js](https://github.com/ethereum/web3.js) support to deploy and interact with contracts live on the Ethereum Blockchain.
+There is alpha support for [web3.js](https://github.com/ethereum/web3.js) connections to a local Ethereum Node, to deploy and interact with contracts live on the Ethereum Blockchain.
