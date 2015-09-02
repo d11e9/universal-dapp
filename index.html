@@ -74,13 +74,13 @@
 
             <p>Documentation / Source: <a href="https://github.com/d11e9/universal-dapp">https://github.com/d11e9/universal-dapp</a></p>
 
-            <p>A Universal Interface or (ÐApp) for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like <a href="https://github.com/d11e9/browser-solidity">browser-solidity</a> or in cases where you already have an ABI and/or bytecode for an existing contract</p>
+            <p>A Universal Interface or (ÐApp) for contracts on the Ethereum blockchain. Best used in conjunction with a contract compiler like <a href="https://d11e9.github.io/browser-solidity">browser-solidity</a> or in cases where you already have an ABI and/or bytecode for an existing contract.</p>
 
-            <p>By default universal dapp runs only in a VM</p>
-            <p><label><input  id="novm" type="checkbox" /> Use local Node (warning! alpha software)</label></p>
+            <p>By default Universal ÐApp runs in a VM</p>
+            <p><label><input  id="novm" type="checkbox" /> Use local Node (Warning! alpha software)</label></p>
         </div>
-        <div id="new"></div>
 
+        <div id="new"></div>
         <div id="dapps"></div>
 
         <script>
@@ -96,10 +96,18 @@
                 // in practice you would do it as in the comment above
                 var vm = true;
 
-                function setup () {
+                function setup (ev) {
+                    if (!vm) {
+                        var ok = confirm( "WARNING: Not using a VM, transactions will be sent to http://localhost:8545")
+                        if (!ok && ev) {
+                            vm = true;
+                            ev.target.checked = false;
+                            return;
+                        }
+                    }
+
                     var dapp = new UniversalDApp([], { vm: vm, removable: true, removable_instances: true });
 
-                    if (!vm) { alert( "Warning not using VM, transactions will be sent to localhost:8545")}
 
                     $('#dapps').empty();
                     $('#new').empty().append( dapp.getABIInputForm( function(err, d){
@@ -108,17 +116,24 @@
                         else $('#dapps').append( d.render() )
                     }))
 
-                    $('.udapp-setup .json').val( JSON.stringify( [{ name: "Example Ballot", interface: ballotABI, bytecode: ballotCode }]) );
+                    $('.udapp-setup .json').val( JSON.stringify( [{
+                        name: "Example Ballot",
+                        interface: ballotABI,
+                        bytecode: ballotCode 
+                    }]) );
+
                 }
 
 
                 document.getElementById('novm').addEventListener( 'change', function(ev){
                     vm = !ev.target.checked;
-                    setup()
+                    setup(ev)
                 })
 
 
                 setup();
+
+                
 
                 
 

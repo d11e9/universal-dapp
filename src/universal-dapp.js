@@ -32,12 +32,11 @@ UniversalDApp.prototype.render = function () {
         for (var c in this.contracts) {
             var $contractEl = $('<div class="contract"/>');
 
-            $contractEl.append( $title );
             if (this.contracts[c].address) {
                 this.getInstanceInterface(this.contracts[c], this.contracts[c].address, $contractEl );
             } else {
                 var $title = $('<span class="title"/>').text( this.contracts[c].name );
-                $contractEl.append( $title, this.getCreateInterface( $contractEl, this.contracts[c]) );
+                $contractEl.append( $title ).append( this.getCreateInterface( $contractEl, this.contracts[c]) );
             }
             this.$el.append( $contractEl );
         }
@@ -100,7 +99,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $close.click( function(){ $instance.remove(); } )
             $instance.append( $close );
         }
-        var $title = $('<span class="title"/>').text( contract.name + " at " + address.toString('hex') );
+        var $title = $('<span class="title"/>').text( contract.name + " at 0x" + address.toString('hex') );
         $title.click(function(){
             $instance.toggleClass('hide');
         })

@@ -29,7 +29,9 @@
 	cursor: pointer;
 }
 
-
+.udapp .contract {
+	margin-bottom: 1em;
+}
 
 .udapp .create {
 	overflow: auto;
@@ -73,10 +75,11 @@
 }
 
 .udapp .instance {
-	padding: 0.4em;
-	background-color: #ccc;
-	margin-bottom: 1em;
-	position: relative;
+    padding: 0.4em;
+    background-color: #ECD7D7;
+    margin-bottom: 1em;
+    position: relative;
+    border: 1px solid #999;
 }
 
 .udapp .instance:last-child {
