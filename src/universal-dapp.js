@@ -21,7 +21,7 @@ function UniversalDApp (contracts, options) {
         this.stateTrie.put(this.address, this.account.serialize());   
     } else {
         var host = options.host || "localhost";
-        var host = options.port || "8545";
+        var port = options.port || "8545";
         var rpc_url = 'http://' + host + ':' + port;
         web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
