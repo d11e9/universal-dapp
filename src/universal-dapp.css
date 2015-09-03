@@ -70,7 +70,10 @@
 .udapp .output .result {
 	position: relative;
 	margin-bottom: 0.5em;
+	white-space: pre;
 }
+
+.udapp .output .result .returned { padding-right: 2em; }
 
 .udapp .output .result:last-child { margin: 0; }
 
@@ -187,6 +190,28 @@
 	border-bottom-right-radius: 0;
 	border-right: 0;
 }
+
+
+.udapp .events:not(:empty):before {
+	content: "Events";
+	font-weight: bold;
+	display: block;
+	margin-bottom: 0.4em;
+}
+
+.udapp .events .event {
+	padding: 0.4em;
+    position: relative;
+    word-wrap: break-word;
+    padding-right: 3em;
+    background-color: white;
+    margin-bottom: 0.5em;
+    white-space: pre;
+}
+
+.udapp .events .event .name { margin-right: 0.5em; }
+
+
 
 .udapp .legend {
 	font-size: 12px;

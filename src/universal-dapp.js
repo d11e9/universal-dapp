@@ -116,11 +116,30 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
             $close.click( function(){ $instance.remove(); } )
             $instance.append( $close );
         }
-        var $title = $('<span class="title"/>').text( contract.name + " at 0x" + address.toString('hex') );
+        var $title = $('<span class="title"/>').text( contract.name + " at " + (self.options.vm ? '0x' : '') + address.toString('hex') );
         $title.click(function(){
             $instance.toggleClass('hide');
-        })
-        $instance.append( $title );
+        });
+
+        $events = $('<div class="events"/>');
+        if (!self.options.vm){
+            var jsInterface = web3.eth.contract(abi).at(address)
+            var eventFilter = jsInterface.allEvents();
+            eventFilter.watch(function(err,response){
+                $event = $('<div class="event" />')
+
+                var $close = $('<div class="udapp-close" />')
+                $close.click( function(){ $event.remove(); } )
+
+                $event.append( $('<span class="name"/>').text(response.event) )
+                    .append( $('<span class="srgs" />').text( JSON.stringify(response.args, null, 2) ) )
+                    .append( $close );
+
+                $events.append( $event )                
+            })
+        }
+        $instance.append( $title )           
+
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
             $instance.append(self.getCallButton({
@@ -128,7 +147,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 address: address
             }));
         });
-        ($el || $createInterface ).append( $instance )
+        ($el || $createInterface ).append( $instance.append( $events ) )
     }
 
     if (!address || !$target) {
@@ -170,11 +189,11 @@ UniversalDApp.prototype.getCallButton = function(args) {
     var outputSpan = $('<div class="output"/>');
 
     function getReturnOutput(result) {
-        return $('<div class="returned">').text(' Returned: ' + JSON.stringify( result ) )
+        return $('<div class="returned">').html('<strong>Returned:</strong> ' + JSON.stringify( result, null, 2 ) )
     }
 
     function getGasUsedOutput(result) {
-        return $('<div class="gasUsed">').text(' Cost: ' + result.gasUsed.toString(10) + ' gas.' )
+        return $('<div class="gasUsed">').html('<strong>Cost:</strong> ' + result.gasUsed.toString(10) + ' gas.' )
     }
 
     function getOutput() {
