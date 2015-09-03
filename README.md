@@ -51,6 +51,44 @@ Or if you just need an interface for an existing contract you can provide its ad
     </script>
 
 
+**Connecting to a running Node**
+
+By default Universal DApp looks to see if there is already an existsing `web3.currentProvider` and will use that if available. If there is no current provider and `vm` is `false` then it will create a new `HttpProvider` (RPC) and connect to the `http://host:port` provided in options, defaulting to `http://localhost:8545`.
+
+
+    <script>
+
+        // perhaps we already have an IPC provider like so
+        web2.setProvider( new web3.providers.IpcProvider( './my/ipc/path/geth.ipc') )
+
+        // relying on an existent currentProvider
+        $(function(){
+            var dApp = new UniversalDApp([{
+                name: "{{name}}",
+                interface: "{{json abi interface}}",
+                address: {{address hex}},
+                host: {{ie: localhost}},
+                port: {{ie: 8545}}
+            }]);
+            $('body').append( dApp.render() )
+        });
+    </script>
+
+or
+
+    <script>
+        // specifing a rpc host and port.
+        $(function(){
+            var dApp = new UniversalDApp([{
+                name: "{{name}}",
+                interface: "{{json abi interface}}",
+                address: {{address hex}},
+                host: {{ie: localhost}},
+                port: {{ie: 8545}}
+            }]);
+            $('body').append( dApp.render() )
+        });
+    </script>
 
 ###Example
 
