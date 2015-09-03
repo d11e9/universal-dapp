@@ -20,7 +20,10 @@ function UniversalDApp (contracts, options) {
         this.nonce = 0;
         this.stateTrie.put(this.address, this.account.serialize());   
     } else {
-        web3.setProvider( new web3.providers.HttpProvider( 'http://localhost:8545') );
+        var host = options.host || "localhost";
+        var port = options.port || "8545";
+        var rpc_url = 'http://' + host + ':' + port;
+        web3.setProvider( new web3.providers.HttpProvider( rpc_url ) );
     }
 
 }
