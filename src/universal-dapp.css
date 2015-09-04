@@ -3,8 +3,9 @@
 	padding: 1em;
 	border: 1px dotted #4D5686;
 	position: relative;
-	margin: 0.5em;
 	box-shadow: 0 0 5px rgba(0,0,0,0.3);
+	box-sizing: border-box;
+	overflow: auto;
 }
 
 .udapp a {
@@ -33,6 +34,10 @@
 	height: 7em;
 }
 
+.udapp button {
+	min-width: 8em;
+}
+
 .udapp-setup button {
 	background-color: #556DF3;
 	color: white;
@@ -55,12 +60,18 @@
     background-color: rgba( 255,255,255,0.5 );
     display: block;
     font-weight: bold;
+    padding-right: 2em;
+    word-wrap: break-word;
 }
 
 .udapp .output {
 	padding: 1em;
     clear: both;
     word-wrap: break-word;
+}
+
+.udapp .constructor > .output {
+	padding-right: 1em;
 }
 
 .udapp .output .error {
@@ -73,7 +84,13 @@
 	white-space: pre;
 }
 
-.udapp .output .result .returned { padding-right: 2em; }
+.udapp .output .result .returned,
+.udapp .output .result .value,
+.udapp .output .result .waiting,
+.udapp .output .result .gasUsed {
+	padding-right: 2em;
+	word-wrap: break-word;
+}
 
 .udapp .output .result:last-child { margin: 0; }
 
@@ -177,6 +194,14 @@
 
 .udapp .contractProperty input {
 	display: none;
+}
+
+.udapp .contractProperty > .value {
+	padding: 0 0.4em;
+	box-sizing: border-box;
+	width: 50%;
+	float: left;
+	word-wrap: break-word;
 }
 
 .udapp .contractProperty.hasArgs input {
