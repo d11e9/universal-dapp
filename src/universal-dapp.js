@@ -122,7 +122,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         });
 
         $events = $('<div class="events"/>');
-        if (!self.options.vm && false){
+        if (!self.options.vm){
             var jsInterface = web3.eth.contract(abi).at(address)
             var eventFilter = jsInterface.allEvents();
             eventFilter.watch(function(err,response){
