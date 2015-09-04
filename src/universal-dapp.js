@@ -122,7 +122,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
         });
 
         $events = $('<div class="events"/>');
-        if (!self.options.vm){
+        if (!self.options.vm && false){
             var jsInterface = web3.eth.contract(abi).at(address)
             var eventFilter = jsInterface.allEvents();
             eventFilter.watch(function(err,response){
@@ -132,7 +132,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 $close.click( function(){ $event.remove(); } )
 
                 $event.append( $('<span class="name"/>').text(response.event) )
-                    .append( $('<span class="srgs" />').text( JSON.stringify(response.args, null, 2) ) )
+                    .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
                     .append( $close );
 
                 $events.append( $event )                
@@ -178,6 +178,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
     // args.abi, args.bytecode [constr only], args.address [fun only]
     // args.appendFunctions [constr only]
     var isConstructor = args.bytecode !== undefined;
+    var lookupOnly = ( args.abi.constant && !isConstructor );
+
     var fun = new web3.eth.function(args.abi);
     var inputs = '';
     $.each(args.abi.inputs, function(i, inp) {
@@ -186,17 +188,26 @@ UniversalDApp.prototype.getCallButton = function(args) {
     });
     if (!args.bytecode && !fun.displayName()) return;
     var inputField = $('<input/>').attr('placeholder', inputs);
+    var $outputOverride = $('<div class="value" />');
     var outputSpan = $('<div class="output"/>');
 
-    function getReturnOutput(result) {
-        return $('<div class="returned">').html('<strong>Returned:</strong> ' + JSON.stringify( result, null, 2 ) )
+    var getReturnOutput = function(result) {
+        var returnName = lookupOnly ? 'Value' : 'Result';
+        var returnCls = lookupOnly ? 'value' : 'returned';
+        return $('<div class="' + returnCls + '">').html('<strong>' + returnName + ':</strong> ' + JSON.stringify( result, null, 2 ) )
     }
 
-    function getGasUsedOutput(result) {
-        return $('<div class="gasUsed">').html('<strong>Cost:</strong> ' + result.gasUsed.toString(10) + ' gas.' )
+    var getGasUsedOutput = function (result) {
+        var $gasUsed = $('<div class="gasUsed">')
+        var caveat = lookupOnly ? '<em>(<a href="#" title="Cost only applies when called by a contract">caveat</a>)</em>' : '';
+        if (result.gasUsed) {
+            var gas = result.gasUsed.toString(10)
+            $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat )
+        }
+        return $gasUsed;
     }
 
-    function getOutput() {
+    var getOutput = function() {
         var values = Array.prototype.slice.call(arguments);
         var $result = $('<div class="result" />');
         var $close = $('<div class="udapp-close" />')
@@ -206,59 +217,71 @@ UniversalDApp.prototype.getCallButton = function(args) {
         return $result;
     }
 
+    var handleCallButtonClick = function( ev ) {
+        var funArgs = $.parseJSON('[' + inputField.val() + ']');
+        var data = fun.toPayload(funArgs).data;
+        if (data.slice(0, 2) == '0x') data = data.slice(2);
+        if (isConstructor) data = args.bytecode + data.slice(8);
+
+        var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
+
+        if (lookupOnly && !inputs.length) {
+            $outputOverride.html( $result )
+        } else {
+            outputSpan.append( $result );
+        }
+
+        self.runTx(data, args, function(err, result) {
+            if (err) {
+                $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
+            } else if (self.options.vm && isConstructor) {
+                $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
+                args.appendFunctions(result.createdAddress);
+            } else if (self.options.vm){
+                var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
+                $result.replaceWith( getOutput( getReturnOutput( outputObj ), getGasUsedOutput( result.vm ) ) );
+            } else if (args.abi.constant && !isConstructor) {
+                $result.replaceWith( getOutput( getReturnOutput( result ) ) );
+            } else {
+                
+                function tryTillResponse (txhash, done) {
+                    web3.eth.getTransactionReceipt(result, testResult );
+
+                    function testResult (err, address) {
+                        if (!err && !address) {
+                            console.log( "Polling for tx receipt....")
+                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
+                        } else done( err, address )
+                    }
+
+                }
+                tryTillResponse( result, function(err, result) {
+                    if (isConstructor) {
+                        $result.html('');
+                        args.appendFunctions(result.contractAddress);
+                    } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
+                })
+            
+            }
+        });
+    }
+
     var button = $('<button />')
         .addClass( 'call' )
         .text(args.bytecode ? 'Create' : fun.displayName())
-        .click(function() {
-            var funArgs = $.parseJSON('[' + inputField.val() + ']');
-            var data = fun.toPayload(funArgs).data;
-            if (data.slice(0, 2) == '0x') data = data.slice(2);
-            if (isConstructor)
-                data = args.bytecode + data.slice(8);
-            $result = getOutput( $('<a href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
+        .click( handleCallButtonClick );
 
-            outputSpan.append( $result );
-            self.runTx(data, args, function(err, result) {
-                if (err) {
-                    $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
-                } else if (self.options.vm && isConstructor) {
-                    $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
-                    args.appendFunctions(result.createdAddress);
-                } else if (self.options.vm){
-                    var outputObj = fun.unpackOutput('0x' + result.vm.return.toString('hex'));
-                    $result.replaceWith( getOutput( getReturnOutput( outputObj ), getGasUsedOutput( result.vm ) ) );
-                } else if (args.abi.constant && !isConstructor) {
-                    $result.replaceWith( getOutput( getReturnOutput( result ) ) );
-                } else {
-                    
-                    function tryTillResponse (txhash, done) {
-                        web3.eth.getTransactionReceipt(result, testResult );
-
-                        function testResult (err, address) {
-                            if (!err && !address) {
-                                console.log( "Polling for tx receipt....")
-                                setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
-                            } else done( err, address )
-                        }
-
-                    }
-                    tryTillResponse( result, function(err, result) {
-                        if (isConstructor) {
-                            $result.html('');
-                            args.appendFunctions(result.contractAddress);
-                        } else $result.replaceWith( getOutput( getReturnOutput( result ), getGasUsedOutput( result ) ) );
-                    })
-                
-                }
-            });
-        });
+    if (lookupOnly && !inputs.length) {
+        handleCallButtonClick();
+    }
 
     var $contractProperty = $('<div class="contractProperty"/>');
     $contractProperty
         .toggleClass( 'constant', !isConstructor && args.abi.constant )
         .toggleClass( 'hasArgs', args.abi.inputs.length > 0)
         .toggleClass( 'constructor', isConstructor)
-        .append(button).append(inputField);
+        .append(button)
+        .append( (lookupOnly && !inputs.length) ? $outputOverride : inputField );
     return $contractProperty.append(outputSpan);
 }
 
@@ -274,17 +297,15 @@ UniversalDApp.prototype.clickContractAt = function ( self, $contract, contract )
 UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
+    var isConstructor = args.bytecode !== undefined;
+
+    console.log( "runtx (" + args.abi.name + ") data: ", data )
+    console.log( "runtx (" + args.abi.name + ") to:", to )
     
     if (!this.vm) {
-        if (constant) {
-            web3.eth.call({
-                from: web3.eth.accounts[0],
-                to: to,
-                data: data,
-                gas: 1000000
-            }, function(err, resp) {
-                cb( err, resp )
-            })
+        if (constant && !isConstructor) {
+            var func = web3.eth.contract( [args.abi] ).at( to );
+            func[args.abi.name].call( cb );
         } else {
             web3.eth.sendTransaction({
                 from: web3.eth.accounts[0],
@@ -297,8 +318,6 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
             })
         }
     } else {
-        console.log( "runtx data: ", data )
-        console.log( "runtx to:", to )
         try {
             var tx = new EthVm.Transaction({
                 nonce: new Buffer([this.nonce++]), //@todo count beyond 255

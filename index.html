@@ -44,8 +44,8 @@
             }
 
             #dapps .udapp {
-                float: left;
-                width: 36em;
+                /*float: left;
+                width: 60em;*/
                 margin-right: 1em;
                 margin-bottom: 1em;
             }
@@ -62,7 +62,6 @@
 
                 #dapps .udapp {
                     width: 100%;
-                    box-sizing: border-box;
                 }
             }
         
@@ -94,19 +93,19 @@
 
                 // fill in some defaults for demo. this is not the way you would do it.
                 // in practice you would do it as in the comment above
-                var vm = true;
 
-                function setup (ev) {
-                    if (!vm) {
+                function setup (novm, ev) {
+                    if (novm) {
+                        if (web3 && web3.currentProvider) delete web3.currentProvider;
                         var ok = confirm( "WARNING: Not using a VM, transactions will be sent to http://localhost:8545")
-                        if (!ok && ev) {
-                            vm = true;
-                            ev.target.checked = false;
+                        if (!ok) {
+                            novm = false;
+                            document.getElementById('novm').checked = novm;
                             return;
                         }
                     }
 
-                    var dapp = new UniversalDApp([], { vm: vm, removable: true, removable_instances: true});
+                    var dapp = new UniversalDApp([], { vm: !novm, removable: true, removable_instances: true});
 
 
                     $('#dapps').empty();
@@ -122,12 +121,11 @@
 
 
                 document.getElementById('novm').addEventListener( 'change', function(ev){
-                    vm = !ev.target.checked;
-                    setup(ev)
+                    setup( ev.target.checked )
                 })
 
 
-                setup();
+                setup( document.getElementById('novm').checked );
 
                 
 
