@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Universal ÐApp</title>
+        <script src="libs/jquery-2.1.3.min.js"></script>
+        <script src="libs/web3.min.js"></script>
+        <script src="libs/ethereumjs-vm.js"></script>
+        <script src="src/universal-dapp.js"></script>
+        <link rel="stylesheet" href="src/universal-dapp.css">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+        <style>
+            
+            body {
+                margin: 0;
+                padding: 2em;
+                font-family: monospace;
+            }
+        
+        </style>
+    </head>
+    <body>
+
+        <div id="info">
+            <h1>Web3.js bug report</h1>
+            <p>Documentation / Source: <a href="https://github.com/d11e9/universal-dapp">https://github.com/d11e9/universal-dapp</a></p>
+
+            <h2><pre>mapping( bytes32 => bytes32) public x;</pre></h2>
+
+
+            <p>This is a demo page to reproduce a bug in web3.js</p>
+            <p>Steps in VM:</p>
+            <ul>
+                <li>Make sure 'use local node' is UNCHECKED.</li>
+                <li>Click create.</li>
+                <li>Set a key: "example", "myExampleValue"</li>
+                <li>get the value: "example"</li>
+                <li>Result: you see the value returned: <pre>"0x6d794578616d706c6556616c7565000000000000000000000000000000000000"</pre></li>
+            </ul>
+
+            <p>Steps when connected to a node (refresh)</p>
+            <p>You will need to mine the transactions (ideally on a test net)</p>
+
+            <ul>
+                <li>Make sure 'use local node' is CHECKED.</li>
+                <li>Click create.</li>
+                <li>Set a key: "example", "myExampleValue"</li>
+                <li>get the value: "example"</li>
+                <li>Result: you see the <strong>Incorrect value</strong> returned: <pre>"0x0000000...."</pre></li>
+            </ul>
+
+            <p>For comparision you can get the public val method, which returns the last set bytes32. in the above case getting the value directly works while getting from the mapping returns '0x0000'</p>
+
+            <p>For reference the solidity code for this test case is: </p>
+            <textarea name="" id="" cols="30" rows="10">contract keyvalue {
+    bytes32 public val;
+    mapping (bytes32 => bytes32) public keys;
+    
+    function set(bytes32 key, bytes32 value) returns(bytes32) {
+        val = value;
+        keys[key] = value;
+        return keys[key];
+    }
+}</textarea>
+
+
+
+            <p>By default Universal ÐApp runs in a VM</p>
+            <p><label><input  id="novm" type="checkbox" /> Use local Node (Warning! alpha software)</label></p>
+        </div>
+
+        <div id="new"></div>
+        <div id="dapps"></div>
+
+        <script>
+            $(function(){
+
+                var uDAppJson = [{"name":"keyvalue","interface":"[{\"constant\":true,\"inputs\":[],\"name\":\"val\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"keys\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"key\",\"type\":\"bytes32\"},{\"name\":\"value\",\"type\":\"bytes32\"}],\"name\":\"set\",\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\"}],\"type\":\"function\"}]\n","bytecode":"6060604052610139806100136000396000f30060606040526000357c0100000000000000000000000000000000000000000000000000000000900480633c6bb4361461004f578063dde5b7a114610070578063f71f7a25146100975761004d565b005b61005a6004506100c4565b6040518082815260200191505060405180910390f35b61008160048035906020015061011e565b6040518082815260200191505060405180910390f35b6100ae6004803590602001803590602001506100cd565b6040518082815260200191505060405180910390f35b60006000505481565b60008160006000508190555081600160005060008581526020019081526020016000206000508190555060016000506000848152602001908152602001600020600050549050610118565b92915050565b6001600050602052806000526040600020600091509050548156"}]
+
+                // var dapp = new UniversalDApp([{name: myName, interface: myABI, bytecode: myCode }])
+                // $('#dapps').append( dapp.render() )                
+
+                // fill in some defaults for demo. this is not the way you would do it.
+                // in practice you would do it as in the comment above
+
+                function setup (novm, ev) {
+                    if (novm) {
+                        if (web3 && web3.currentProvider) delete web3.currentProvider;
+                        var ok = confirm( "WARNING: Not using a VM, transactions will be sent to http://localhost:8545")
+                        if (!ok) {
+                            novm = false;
+                            document.getElementById('novm').checked = novm;
+                            return;
+                        }
+                    }
+
+                    var dapp = new UniversalDApp([], { vm: !novm, removable: true, removable_instances: true});
+
+
+                    $('#dapps').empty();
+                    $('#new').empty().append( dapp.getABIInputForm( function(err, d){
+                        console.log( d )
+                        if (err) console.error( err )
+                        else $('#dapps').append( d.render() )
+                    }))
+
+                    $('.udapp-setup .json').val( JSON.stringify( uDAppJson ) );
+
+                }
+
+
+                document.getElementById('novm').addEventListener( 'change', function(ev){
+                    setup( ev.target.checked )
+                })
+
+
+                setup( document.getElementById('novm').checked );
+
+                
+
+                
+
+                
+            });
+
+        </script>
+
+    </body>
+</html>
