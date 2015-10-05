@@ -84,6 +84,7 @@
 	white-space: pre;
 }
 
+.udapp .result { position: relative; }
 .udapp .output .result .returned,
 .udapp .output .result .value,
 .udapp .output .result .waiting,
