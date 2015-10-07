@@ -3,7 +3,7 @@ function UniversalDApp (contracts, options) {
     this.$el = $('<div class="udapp" />');
     this.contracts = contracts;
 
-    if (web3.currentProvider) {
+    if (!options.vm && web3.currentProvider) {
 
     } else if (options.vm) {
         this.stateTrie = new EthVm.Trie();
@@ -138,10 +138,10 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                     .append( $('<span class="args" />').text( JSON.stringify(response.args, null, 2) ) )
                     .append( $close );
 
-                $events.append( $event )                
+                $events.append( $event );            
             })
         }
-        $instance.append( $title )           
+        $instance.append( $title );        
 
         $.each(abi, function(i, funABI) {
             if (funABI.type != 'function') return;
@@ -150,7 +150,7 @@ UniversalDApp.prototype.getInstanceInterface = function (contract, address, $tar
                 address: address
             }));
         });
-        ($el || $createInterface ).append( $instance.append( $events ) )
+        ($el || $createInterface ).append( $instance.append( $events ) );
     }
 
     if (!address || !$target) {
@@ -202,7 +202,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
     var getGasUsedOutput = function (result) {
         var $gasUsed = $('<div class="gasUsed">')
-        var caveat = lookupOnly ? '<em>(<a href="#" title="Cost only applies when called by a contract">caveat</a>)</em>' : '';
+        var caveat = lookupOnly ? '<em>(<span class="caveat" title="Cost only applies when called by a contract">caveat</span>)</em>' : '';
         if (result.gasUsed) {
             var gas = result.gasUsed.toString(10)
             $gasUsed.html('<strong>Cost:</strong> ' + gas + ' gas. ' + caveat )
@@ -213,9 +213,9 @@ UniversalDApp.prototype.getCallButton = function(args) {
     var getOutput = function() {
         var values = Array.prototype.slice.call(arguments);
         var $result = $('<div class="result" />');
-        var $close = $('<div class="udapp-close" />')
-            $close.click( function(){ $result.remove(); } )
-            $result.append( $close );
+        var $close = $('<div class="udapp-close" />');
+        $close.click( function(){ $result.remove(); } );
+        $result.append( $close );
         for( var v in values ) { $result.append( values[v] ); } 
         return $result;
     }
@@ -229,7 +229,7 @@ UniversalDApp.prototype.getCallButton = function(args) {
         var $result = getOutput( $('<a class="waiting" href="#" title="Waiting for transaction to be mined.">Polling for tx receipt...</a>') );
 
         if (lookupOnly && !inputs.length) {
-            $outputOverride.html( $result )
+            $outputOverride.empty().append( $result );
         } else {
             outputSpan.append( $result );
         }
@@ -252,9 +252,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
 
                     function testResult (err, address) {
                         if (!err && !address) {
-                            console.log( "Polling for tx receipt....")
-                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500)
-                        } else done( err, address )
+                            setTimeout( function(){ tryTillResponse(txhash, done) }, 500);
+                        } else done( err, address );
                     }
 
                 }
@@ -301,9 +300,6 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
     var to = args.address;
     var constant = args.abi.constant;
     var isConstructor = args.bytecode !== undefined;
-
-    console.log( "runtx (" + args.abi.name + ") data: ", data )
-    console.log( "runtx (" + args.abi.name + ") to:", to )
     
     if (!this.vm) {
         if (constant && !isConstructor) {
@@ -316,9 +312,8 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: data,
                 gas: 1000000
             }, function(err, resp) {
-                console.log( 'sendTx callback:', err, resp )
-                cb( err, resp )
-            })
+                cb( err, resp );
+            });
         }
     } else {
         try {
