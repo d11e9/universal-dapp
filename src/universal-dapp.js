@@ -234,6 +234,8 @@ UniversalDApp.prototype.getCallButton = function(args) {
         self.runTx(data, args, function(err, result) {
             if (err) {
                 $result.replaceWith( getOutput( $('<span/>').text(err).addClass('error') ) );
+            } else if (result.vm.exception) {
+                $result.replaceWith( getOutput( $('<span/>').text('VM Exception: ' + result.vm.exceptionError).addClass('error') ) );
             } else if (self.options.vm && isConstructor) {
                 $result.replaceWith( getOutput( getGasUsedOutput( result ) ) );
                 args.appendFunctions(result.createdAddress);
