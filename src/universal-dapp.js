@@ -322,7 +322,7 @@ UniversalDApp.prototype.runTx = function( data, args, cb) {
                 data: new Buffer(data, 'hex')
             });
             tx.sign(new Buffer(this.secretKey, 'hex'));
-            this.vm.runTx({tx: tx}, cb);
+            this.vm.runTx({tx: tx, skipBalance: true, skipNonce: true}, cb);
         } catch (e) {
             cb( e, null );
         }
